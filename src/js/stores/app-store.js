@@ -63,7 +63,7 @@ function _cartTotals(){
   return{'qty': qty, 'total': total};
 }
 
-var AppStore = assign(EventEmmiter.prototype,{
+var AppStore = assign(EventEmitter.prototype,{
   emitChange: function(){
     this.emit(CHANGE_EVENT)  
   },
@@ -112,3 +112,5 @@ var AppStore = assign(EventEmmiter.prototype,{
     return true;
   })
 })
+
+module.exports = AppStore;
