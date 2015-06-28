@@ -3,7 +3,6 @@ var AppActions = require('../actions/app-actions');
 
 var App = React.createClass({
   handler: function(){
-    console.log('I am here');
     AppActions.addItem("this is an item") 
   },
   render:function(){
