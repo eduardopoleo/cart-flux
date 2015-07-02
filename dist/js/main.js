@@ -20433,34 +20433,38 @@ module.exports = require('./lib/React');
 },{"./lib/React":33}],161:[function(require,module,exports){
 var AppConstants = require('../constants/app-constants');
 var AppDispatcher = require('../dispatchers/app-dispatcher');
+//app-Constant contains the name of the actions.
+//requires the dispatcher due to the flow!
 
 var AppActions = {
+  //The info in this case will come from addToCart view.
   addItem: function(item){
+    //In turn this sends the info to the dispatcher! 
     AppDispatcher.handleViewAction({
       actionType: AppConstants.ADD_ITEM,
       item: item
-    }) 
+    })
   },
 
   removeItem: function(index){
     AppDispatcher.handleViewAction({
       actionType: AppConstants.REMOVE_ITEM,
       index: index
-    }) 
+    })
   },
 
   increaseItem: function(index){
     AppDispatcher.handleViewAction({
       actionType: AppConstants.INCREASE_ITEM,
       index: index
-    }) 
+    })
   },
 
   decreaseItem: function(index){
     AppDispatcher.handleViewAction({
       actionType: AppConstants.DEACREASE_ITEM,
       index: index
-    }) 
+    })
   }
 }
 
@@ -20469,10 +20473,12 @@ module.exports = AppActions;
 },{"../constants/app-constants":169,"../dispatchers/app-dispatcher":170}],162:[function(require,module,exports){
 var React = require('react');
 var AppActions = require('../actions/app-actions');
-
+//Requires app action, why?
+//Pressing the button triggers the 'ACTION' of adding an item to the cart!
+//Separated this from the app catalog to have content-view apart from action-view
 var AddToCart = React.createClass({displayName: "AddToCart",
   handler: function(){
-    AppActions.addItem(this.props.item) 
+    AppActions.addItem(this.props.item) //this basically the hash.
   },
   render:function(){
     return React.createElement("button", {onClick: this.handler}, "Add to Cart")
@@ -20487,22 +20493,27 @@ var AppStore = require('../stores/app-store.js')
 var RemoveFromCart = require('./app-removefromcart.js')
 var Increase = require('./app-decreaseitem')
 var Decrease = require('./app-increaseitem')
+//Cart needs components and react
+//it also needs the store, why?
 
 function cartItems(){
   return {items: AppStore.getCart()}
 }
+//here it is this is how it extracts the value of items from the appStore
+//Now how does it know when to trigger this?, how does emit work?
 
 var Cart = React.createClass({displayName: "Cart",
   getInitialState: function(){
-    return cartItems() 
-  }, 
-
-  componentWillMount: function(){
-    AppStore.addChangeListener(this._onChange) 
+    return cartItems()
   },
-
+  //After mount it listen for the event and then triggers the on_chage
+  //This methods just says. Hey there is a change go there to do something about it.
+  componentWillMount: function(){
+    AppStore.addChangeListener(this._onChange)
+  },
+  //On change what it does is to retrieve the store cart item :) yei
   _onChange: function(){
-    this.setState(cartItems()) 
+    this.setState(cartItems())
   },
 
   render:function(){
@@ -20521,11 +20532,11 @@ var Cart = React.createClass({displayName: "Cart",
             React.createElement(Decrease, {index: i})
           ), 
           React.createElement("td", null, subtotal)
-        ) 
+        )
       );
-    }) 
+    })
     return (
-      React.createElement("table", {className: "table table-hove"}, 
+      React.createElement("table", {className: "table table-hover"}, 
         React.createElement("thead", null, 
           React.createElement("tr", null, 
             React.createElement("th", null), 
@@ -20541,12 +20552,12 @@ var Cart = React.createClass({displayName: "Cart",
         React.createElement("tfoot", null, 
           React.createElement("tr", null, 
             React.createElement("td", {className: "text-right"}, 
-             "Total" 
+             "Total"
             ), 
             React.createElement("td", null, "$", total)
           )
         )
-      ) 
+      )
     )
   }
 });
@@ -20557,15 +20568,18 @@ module.exports = Cart;
 var React = require('react');
 var AppStore = require('../stores/app-store.js')
 var AddToCart = require('./app-addtocart.js')
-
+//becuase it used items, which is define in the app-store
+// *******    ******
+// *Store* -> *View*
+// *******    ******
 function getCatalog(){
-  return {items: AppStore.getCatalog()}
+  return {items: AppStore.getCatalog()}//wierd assignment!
 }
 
 var Catalog = React.createClass({displayName: "Catalog",
   getInitialState: function(){
-    return getCatalog() 
-  }, 
+    return getCatalog()
+  },
 
   render:function(){
     var items = this.state.items.map(function(item){
@@ -20574,9 +20588,9 @@ var Catalog = React.createClass({displayName: "Catalog",
           React.createElement("td", null, item.title), 
           React.createElement("td", null, "$", item.cost), 
           React.createElement("td", null, React.createElement(AddToCart, {item: item}))
-        ) 
+        )
       );
-    }) 
+    })
     return (
       React.createElement("table", {className: "table table-hover"}, 
         items
@@ -20636,7 +20650,9 @@ module.exports = RemoveFromCart;
 var React = require('react');
 var Catalog = require('../components/app-catalog');
 var Cart = require('../components/app-cart')
-
+// App just require other components!
+// maybe becuase it does not hold any logic? Maybe because there is not other
+//flow
 var App = React.createClass({displayName: "App",
   render:function(){
     return (
@@ -20645,8 +20661,8 @@ var App = React.createClass({displayName: "App",
         React.createElement(Catalog, null), 
         React.createElement("h1", null, "Cart"), 
         React.createElement(Cart, null)
-      )     
-    ); 
+      )
+    );
   }
 });
 
@@ -20663,15 +20679,18 @@ module.exports = {
 },{}],170:[function(require,module,exports){
 var Dispatcher = require('flux').Dispatcher;
 var assign = require('react/lib/Object.assign');
+//Requires the facebook dispatcher to have access to the magic
 
 var AppDispatcher = assign(new Dispatcher(), {
   handleViewAction: function(action) {
     console.log('action', action)
+    //dispatch it is probably defined in the flux dispatcher (but what does it do?)
+    //How does it know that it has to update the cart? Is the cart registered to the payload?
     this.dispatch({
       source: "VIEW_ACTION",
-      action: action 
+      action: action
     })
-  }  
+  }
 });
 
 module.exports = AppDispatcher
@@ -20685,10 +20704,14 @@ React.render(React.createElement(App, null), document.getElementById('main'));
 
 },{"./components/app":168,"react":160}],172:[function(require,module,exports){
 var AppDispatcher = require('../dispatchers/app-dispatcher');
+//Does this automatically registers it to the dispatcher?
+//No but we will need to use the AppDispatcher.register method to register to that specific dispatcher
+//Depening on the
 var AppConstants = require('../constants/app-constants');
 var assign = require('react/lib/Object.assign');
+//require the assigns to define the dispatcher and the stores
 var EventEmitter = require('events').EventEmitter;
-
+//Require broadcast the changes to the action/views?
 
 var CHANGE_EVENT = 'change';
 
@@ -20701,14 +20724,14 @@ for(var i=1; i<9; i++) {
   'summary': 'This is an awesome widget',
   'description': 'Lorem ipsum big very long and boring text',
   'cost': i
- }); 
+ });
 }
 
 var _cartItems = [];
 
 function _removeItem(index){
-  _cartItem[index].inCart = false;
-  _cartItem.splice(index, 1);
+  _cartItems[index].inCart = false;
+  _cartItems.splice(index, 1);
 }
 
 function _increaseItem(index){
@@ -20717,43 +20740,45 @@ function _increaseItem(index){
 
 function _decreaseItem(index){
   if(_cartItems[index].qty>1){
-    _cartItems[index].qty--; 
+    _cartItems[index].qty--;
   }
   else{
-    _removeItem(index); 
+    _removeItem(index);
   }
 }
 
 
 function _addItem(item){
+  //inCart is not a method is hash key
   if(!item.inCart){
     item['qty'] = 1;
-    item['inCart'] = true; 
+    item['inCart'] = true;
     _cartItems.push(item);
   }
   else{
     _cartItems.forEach(function(cartItem, i){
       if(cartItem.id===item.id){
-        _increaseItem(i); 
+        _increaseItem(i);
       }
-    }); 
+    });
   }
 }
 
 function _cartTotals(){
   var qty =0, total = 0;
   _cartItems.forEach(function(cartItem){
-    qty += cartItem.qty; 
+    qty += cartItem.qty;
     total += cartItem.qty*cartItem.cost;
   });
   return{'qty': qty, 'total': total};
 }
-
+//The store is an event emitter it self!.
 var AppStore = assign(EventEmitter.prototype,{
+  //Emits the change!
   emitChange: function(){
-    this.emit(CHANGE_EVENT)  
+    this.emit(CHANGE_EVENT)
   },
-
+  //listen to the change!
   addChangeListener: function(callback){
     this.on(CHANGE_EVENT, callback)
   },
@@ -20763,7 +20788,7 @@ var AppStore = assign(EventEmitter.prototype,{
   },
 
   getCart: function(){
-    return _cartItems 
+    return _cartItems
   },
 
   getCatalog: function(){
@@ -20771,30 +20796,32 @@ var AppStore = assign(EventEmitter.prototype,{
   },
 
   getCartTotals: function(){
-    return _cartTotals() 
+    return _cartTotals()
   },
 
+  //This is how I register to an specific dispatcher (In this case AppDispatcher)
   dispatcherIndex: AppDispatcher.register(function(payload){
-    var action = payload.action; //Action from handleViewAction
+    //payload = {source, action}, we only care about action.
+    var action = payload.action;
     switch(action.actionType){
-      case AppConstants.ADD_ITEM:
-       _addItem(payload.action.item); 
+      case AppConstants.ADD_ITEM: //Having one place for the constants makes sense now.
+       _addItem(payload.action.item); //action = {actiontype, item}
        break;
 
       case AppConstants.REMOVE_ITEM:
-       _addItem(payload.action.index); 
+       _removeItem(payload.action.index); //action = {actiontype, index}
        break;
 
       case AppConstants.INCREASE_ITEM:
-       _addItem(payload.action.index); 
+       _increaseItem(payload.action.index);
        break;
 
       case AppConstants.DECREASE_ITEM:
-       _addItem(payload.action.index); 
+       _decreaseItem(payload.action.index);
        break;
-    } 
+    }
     AppStore.emitChange();
-
+    //Broadcast the events to the views in here
     return true;
   })
 })

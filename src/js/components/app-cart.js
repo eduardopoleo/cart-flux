@@ -3,22 +3,27 @@ var AppStore = require('../stores/app-store.js')
 var RemoveFromCart = require('./app-removefromcart.js')
 var Increase = require('./app-decreaseitem')
 var Decrease = require('./app-increaseitem')
+//Cart needs components and react
+//it also needs the store, why?
 
 function cartItems(){
   return {items: AppStore.getCart()}
 }
+//here it is this is how it extracts the value of items from the appStore
+//Now how does it know when to trigger this?, how does emit work?
 
 var Cart = React.createClass({
   getInitialState: function(){
-    return cartItems() 
-  }, 
-
-  componentWillMount: function(){
-    AppStore.addChangeListener(this._onChange) 
+    return cartItems()
   },
-
+  //After mount it listen for the event and then triggers the on_chage
+  //This methods just says. Hey there is a change go there to do something about it.
+  componentWillMount: function(){
+    AppStore.addChangeListener(this._onChange)
+  },
+  //On change what it does is to retrieve the store cart item :) yei
   _onChange: function(){
-    this.setState(cartItems()) 
+    this.setState(cartItems())
   },
 
   render:function(){
@@ -37,11 +42,11 @@ var Cart = React.createClass({
             <Decrease index={i} />
           </td>
           <td>{subtotal}</td>
-        </tr> 
+        </tr>
       );
-    }) 
+    })
     return (
-      <table className="table table-hove">
+      <table className="table table-hover">
         <thead>
           <tr>
             <th></th>
@@ -56,13 +61,13 @@ var Cart = React.createClass({
         </tbody>
         <tfoot>
           <tr>
-            <td className="text-right"> 
-             Total 
+            <td className="text-right">
+             Total
             </td>
             <td>${total}</td>
           </tr>
         </tfoot>
-      </table> 
+      </table>
     )
   }
 });
