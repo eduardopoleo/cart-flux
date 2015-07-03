@@ -18,7 +18,8 @@ for(var i=1; i<9; i++) {
   'title': 'Widget #' + i,
   'summary': 'This is an awesome widget',
   'description': 'Lorem ipsum big very long and boring text',
-  'cost': i
+  'cost': i,
+  'img' : 'assets/product.png'
  });
 }
 

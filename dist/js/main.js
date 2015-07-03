@@ -20470,48 +20470,53 @@ module.exports = AppActions;
 
 },{"../constants/app-constants":169,"../dispatchers/app-dispatcher":170}],162:[function(require,module,exports){
 var React = require('react');
-var AppActions = require('../actions/app-actions');
-//Requires app action, why?
-//Pressing the button triggers the 'ACTION' of adding an item to the cart!
-//Separated this from the app catalog to have content-view apart from action-view
-var AddToCart = React.createClass({displayName: "AddToCart",
-  handler: function(){
-    AppActions.addItem(this.props.item) //this basically the hash.
-  },
+var Catalog = require('./catalog/app-catalog');
+var Cart = require('./cart/app-cart');
+// App just require other components!
+// maybe becuase it does not hold any logic? Maybe because there is not other
+//flow
+var App = React.createClass({displayName: "App",
   render:function(){
-    return React.createElement("button", {onClick: this.handler}, "Add to Cart")
+    return (
+      React.createElement("div", null, 
+        React.createElement("h1", null, "Lets shop"), 
+        React.createElement(Catalog, null), 
+        React.createElement("h1", null, "Cart"), 
+        React.createElement(Cart, null)
+      )
+    );
   }
 });
 
-module.exports = AddToCart;
+module.exports = App;
 
-},{"../actions/app-actions":161,"react":160}],163:[function(require,module,exports){
+},{"./cart/app-cart":163,"./catalog/app-catalog":168,"react":160}],163:[function(require,module,exports){
 var React = require('react');
-var AppStore = require('../stores/app-store.js')
-var RemoveFromCart = require('./app-removefromcart.js')
-var Increase = require('./app-decreaseitem')
-var Decrease = require('./app-increaseitem')
+var AppStore = require('../../stores/app-store.js');
+var RemoveFromCart = require('./app-removefromcart.js');
+var Increase = require('./app-decreaseitem');
+var Decrease = require('./app-increaseitem');
 //Cart needs components and react
 //it also needs the store, why?
 
 function cartItems(){
-  return {items: AppStore.getCart()}
+  return {items: AppStore.getCart()};
 }
 //here it is this is how it extracts the value of items from the appStore
 //Now how does it know when to trigger this?, how does emit work?
 
 var Cart = React.createClass({displayName: "Cart",
   getInitialState: function(){
-    return cartItems()
+    return cartItems();
   },
   //After mount it listen for the event and then triggers the on_chage
   //This methods just says. Hey there is a change go there to do something about it.
   componentWillMount: function(){
-    AppStore.addChangeListener(this._onChange)
+    AppStore.addChangeListener(this._onChange);
   },
   //On change what it does is to retrieve the store cart item :) yei
   _onChange: function(){
-    this.setState(cartItems())
+    this.setState(cartItems());
   },
 
   render:function(){
@@ -20562,21 +20567,83 @@ var Cart = React.createClass({displayName: "Cart",
 
 module.exports = Cart;
 
-},{"../stores/app-store.js":172,"./app-decreaseitem":165,"./app-increaseitem":166,"./app-removefromcart.js":167,"react":160}],164:[function(require,module,exports){
+},{"../../stores/app-store.js":172,"./app-decreaseitem":164,"./app-increaseitem":165,"./app-removefromcart.js":166,"react":160}],164:[function(require,module,exports){
 var React = require('react');
-var AppStore = require('../stores/app-store.js')
-var AddToCart = require('./app-addtocart.js')
+var AppActions = require('../../actions/app-actions');
+
+var DecreaseItem = React.createClass({displayName: "DecreaseItem",
+  handler: function(){
+    AppActions.decreaseItem(this.props.index);
+  },
+  render:function(){
+    return React.createElement("button", {onClick: this.handler}, "-")
+  }
+});
+
+module.exports = DecreaseItem;
+
+},{"../../actions/app-actions":161,"react":160}],165:[function(require,module,exports){
+var React = require('react');
+var AppActions = require('../../actions/app-actions');
+
+var IncreaseItem = React.createClass({displayName: "IncreaseItem",
+  handler: function(){
+    AppActions.increaseItem(this.props.index);
+  },
+  render:function(){
+    return React.createElement("button", {onClick: this.handler}, "+")
+  }
+});
+
+module.exports = IncreaseItem;
+
+},{"../../actions/app-actions":161,"react":160}],166:[function(require,module,exports){
+var React = require('react');
+var AppActions = require('../../actions/app-actions');
+
+var RemoveFromCart = React.createClass({displayName: "RemoveFromCart",
+  handler: function(){
+    AppActions.removeItem(this.props.index);
+  },
+  render:function(){
+    return React.createElement("button", {onClick: this.handler}, "x")
+  }
+});
+
+module.exports = RemoveFromCart;
+
+},{"../../actions/app-actions":161,"react":160}],167:[function(require,module,exports){
+var React = require('react');
+var AppActions = require('../../actions/app-actions');
+//Requires app action, why?
+//Pressing the button triggers the 'ACTION' of adding an item to the cart!
+//Separated this from the app catalog to have content-view apart from action-view
+var AddToCart = React.createClass({displayName: "AddToCart",
+  handler: function(){
+    AppActions.addItem(this.props.item);
+  },
+  render:function(){
+    return React.createElement("button", {onClick: this.handler}, "Add to Cart")
+  }
+});
+
+module.exports = AddToCart;
+
+},{"../../actions/app-actions":161,"react":160}],168:[function(require,module,exports){
+var React = require('react');
+var AppStore = require('../../stores/app-store.js');
+var AddToCart = require('./app-addtocart.js');
 //becuase it used items, which is define in the app-store
 // *******    ******
 // *Store* -> *View*
 // *******    ******
 function getCatalog(){
-  return {items: AppStore.getCatalog()}//wierd assignment!
+  return {items: AppStore.getCatalog()};
 }
 
 var Catalog = React.createClass({displayName: "Catalog",
   getInitialState: function(){
-    return getCatalog()
+    return getCatalog();
   },
 
   render:function(){
@@ -20599,74 +20666,7 @@ var Catalog = React.createClass({displayName: "Catalog",
 
 module.exports = Catalog;
 
-},{"../stores/app-store.js":172,"./app-addtocart.js":162,"react":160}],165:[function(require,module,exports){
-var React = require('react');
-var AppActions = require('../actions/app-actions');
-
-var DecreaseItem = React.createClass({displayName: "DecreaseItem",
-  handler: function(){
-    AppActions.decreaseItem(this.props.index) 
-  },
-  render:function(){
-    return React.createElement("button", {onClick: this.handler}, "-")
-  }
-});
-
-module.exports = DecreaseItem;
-
-},{"../actions/app-actions":161,"react":160}],166:[function(require,module,exports){
-var React = require('react');
-var AppActions = require('../actions/app-actions');
-
-var IncreaseItem = React.createClass({displayName: "IncreaseItem",
-  handler: function(){
-    AppActions.increaseItem(this.props.index) 
-  },
-  render:function(){
-    return React.createElement("button", {onClick: this.handler}, "+")
-  }
-});
-
-module.exports = IncreaseItem;
-
-},{"../actions/app-actions":161,"react":160}],167:[function(require,module,exports){
-var React = require('react');
-var AppActions = require('../actions/app-actions');
-
-var RemoveFromCart = React.createClass({displayName: "RemoveFromCart",
-  handler: function(){
-    AppActions.removeItem(this.props.index) 
-  },
-  render:function(){
-    return React.createElement("button", {onClick: this.handler}, "x")
-  }
-});
-
-module.exports = RemoveFromCart;
-
-},{"../actions/app-actions":161,"react":160}],168:[function(require,module,exports){
-var React = require('react');
-var Catalog = require('../components/app-catalog');
-var Cart = require('../components/app-cart')
-// App just require other components!
-// maybe becuase it does not hold any logic? Maybe because there is not other
-//flow
-var App = React.createClass({displayName: "App",
-  render:function(){
-    return (
-      React.createElement("div", null, 
-        React.createElement("h1", null, "Lets shop"), 
-        React.createElement(Catalog, null), 
-        React.createElement("h1", null, "Cart"), 
-        React.createElement(Cart, null)
-      )
-    );
-  }
-});
-
-module.exports = App;
-
-},{"../components/app-cart":163,"../components/app-catalog":164,"react":160}],169:[function(require,module,exports){
+},{"../../stores/app-store.js":172,"./app-addtocart.js":167,"react":160}],169:[function(require,module,exports){
 module.exports = {
   ADD_ITEM: 'ADD_ITEM',
   REMOVE_ITEM: 'REMOVE_ITEM',
@@ -20697,7 +20697,7 @@ var React = require('react');
 
 React.render(React.createElement(App, null), document.getElementById('main'));
 
-},{"./components/app":168,"react":160}],172:[function(require,module,exports){
+},{"./components/app":162,"react":160}],172:[function(require,module,exports){
 var AppDispatcher = require('../dispatchers/app-dispatcher');
 //Does this automatically registers it to the dispatcher?
 //No but we will need to use the AppDispatcher.register method to register to that specific dispatcher
@@ -20718,7 +20718,8 @@ for(var i=1; i<9; i++) {
   'title': 'Widget #' + i,
   'summary': 'This is an awesome widget',
   'description': 'Lorem ipsum big very long and boring text',
-  'cost': i
+  'cost': i,
+  'img' : 'assets/product.png'
  });
 }
 
