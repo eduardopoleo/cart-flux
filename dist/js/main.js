@@ -20437,9 +20437,7 @@ var AppDispatcher = require('../dispatchers/app-dispatcher');
 //requires the dispatcher due to the flow!
 
 var AppActions = {
-  //The info in this case will come from addToCart view.
   addItem: function(item){
-    //In turn this sends the info to the dispatcher! 
     AppDispatcher.handleViewAction({
       actionType: AppConstants.ADD_ITEM,
       item: item
@@ -20462,7 +20460,7 @@ var AppActions = {
 
   decreaseItem: function(index){
     AppDispatcher.handleViewAction({
-      actionType: AppConstants.DEACREASE_ITEM,
+      actionType: AppConstants.DECREASE_ITEM,
       index: index
     })
   }
@@ -20523,7 +20521,7 @@ var Cart = React.createClass({displayName: "Cart",
       total += subtotal;
       return(
         React.createElement("tr", {key: i}, 
-          React.createElement("td", null, React.createElement(RemoveFromCart, {index: 1})), 
+          React.createElement("td", null, React.createElement(RemoveFromCart, {index: i})), 
           React.createElement("td", null, item.title), 
           React.createElement("td", null, item.qty), 
           React.createElement("td", null, item.title), 
@@ -20683,9 +20681,6 @@ var assign = require('react/lib/Object.assign');
 
 var AppDispatcher = assign(new Dispatcher(), {
   handleViewAction: function(action) {
-    console.log('action', action)
-    //dispatch it is probably defined in the flux dispatcher (but what does it do?)
-    //How does it know that it has to update the cart? Is the cart registered to the payload?
     this.dispatch({
       source: "VIEW_ACTION",
       action: action

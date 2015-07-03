@@ -33,7 +33,7 @@ var Cart = React.createClass({
       total += subtotal;
       return(
         <tr key={i}>
-          <td><RemoveFromCart index={1}/></td>
+          <td><RemoveFromCart index={i}/></td>
           <td>{item.title}</td>
           <td>{item.qty}</td>
           <td>{item.title}</td>
