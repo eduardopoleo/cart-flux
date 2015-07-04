@@ -22460,6 +22460,8 @@ var AppStore = require('../../stores/app-store.js');
 var RemoveFromCart = require('./app-removefromcart.js');
 var Increase = require('./app-decreaseitem');
 var Decrease = require('./app-increaseitem');
+var StoreWatchMixin = require('../../mixins/StoreWatchMixin');
+
 //Cart needs components and react
 //it also needs the store, why?
 
@@ -22470,19 +22472,7 @@ function cartItems(){
 //Now how does it know when to trigger this?, how does emit work?
 
 var Cart = React.createClass({displayName: "Cart",
-  getInitialState: function(){
-    return cartItems();
-  },
-  //After mount it listen for the event and then triggers the on_chage
-  //This methods just says. Hey there is a change go there to do something about it.
-  componentWillMount: function(){
-    AppStore.addChangeListener(this._onChange);
-  },
-  //On change what it does is to retrieve the store cart item :) yei
-  _onChange: function(){
-    this.setState(cartItems());
-  },
-
+  mixins:[StoreWatchMixin(cartItems)],
   render:function(){
     var total = 0;
     var items = this.state.items.map(function(item, i){
@@ -22531,7 +22521,7 @@ var Cart = React.createClass({displayName: "Cart",
 
 module.exports = Cart;
 
-},{"../../stores/app-store.js":204,"./app-decreaseitem":193,"./app-increaseitem":194,"./app-removefromcart.js":195,"react":188}],193:[function(require,module,exports){
+},{"../../mixins/StoreWatchMixin":204,"../../stores/app-store.js":205,"./app-decreaseitem":193,"./app-increaseitem":194,"./app-removefromcart.js":195,"react":188}],193:[function(require,module,exports){
 var React = require('react');
 var AppActions = require('../../actions/app-actions');
 
@@ -22630,7 +22620,7 @@ var Catalog = React.createClass({displayName: "Catalog",
 
 module.exports = Catalog;
 
-},{"../../stores/app-store.js":204,"./app-addtocart.js":196,"react":188}],198:[function(require,module,exports){
+},{"../../stores/app-store.js":205,"./app-addtocart.js":196,"react":188}],198:[function(require,module,exports){
 var React = require('react');
 
 var CatalogItem = React.createClass({displayName: "CatalogItem",
@@ -22712,6 +22702,33 @@ var React = require('react');
 React.render(React.createElement(App, null), document.getElementById('main'));
 
 },{"./components/app":191,"react":188}],204:[function(require,module,exports){
+var React = require('react');
+var AppStore = require('../stores/app-store');
+
+var StoreWatchMixin = function(cb){
+  return{
+    getInitialState: function(){
+      return cb();
+    },
+    //After mount it listen for the event and then triggers the on_chage
+    //This methods just says. Hey there is a change go there to do something about it.
+    componentWillMount: function(){
+      AppStore.addChangeListener(this._onChange);
+    },
+
+    componentWillUnMount: function(){
+      AppStore.removeChangeListener(this._onChange);
+    },
+    //On change what it does is to retrieve the store cart item :) yei
+    _onChange: function(){
+      this.setState(cb());
+    }
+  };
+};
+
+module.exports = StoreWatchMixin;
+
+},{"../stores/app-store":205,"react":188}],205:[function(require,module,exports){
 var AppDispatcher = require('../dispatchers/app-dispatcher');
 //Does this automatically registers it to the dispatcher?
 //No but we will need to use the AppDispatcher.register method to register to that specific dispatcher
@@ -22786,27 +22803,27 @@ function _cartTotals(){
 var AppStore = assign(EventEmitter.prototype,{
   //Emits the change!
   emitChange: function(){
-    this.emit(CHANGE_EVENT)
+    this.emit(CHANGE_EVENT);
   },
   //listen to the change!
   addChangeListener: function(callback){
-    this.on(CHANGE_EVENT, callback)
+    this.on(CHANGE_EVENT, callback);
   },
 
   removeChangeListener: function(){
-    this.removeListener(CHANGE_EVENT, callback)
+    this.removeListener(CHANGE_EVENT, callback);
   },
 
   getCart: function(){
-    return _cartItems
+    return _cartItems;
   },
 
   getCatalog: function(){
-    return _catalog
+    return _catalog;
   },
 
   getCartTotals: function(){
-    return _cartTotals()
+    return _cartTotals();
   },
 
   //This is how I register to an specific dispatcher (In this case AppDispatcher)
@@ -22834,7 +22851,7 @@ var AppStore = assign(EventEmitter.prototype,{
     //Broadcast the events to the views in here
     return true;
   })
-})
+});
 
 module.exports = AppStore;
 

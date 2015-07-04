@@ -72,27 +72,27 @@ function _cartTotals(){
 var AppStore = assign(EventEmitter.prototype,{
   //Emits the change!
   emitChange: function(){
-    this.emit(CHANGE_EVENT)
+    this.emit(CHANGE_EVENT);
   },
   //listen to the change!
   addChangeListener: function(callback){
-    this.on(CHANGE_EVENT, callback)
+    this.on(CHANGE_EVENT, callback);
   },
 
   removeChangeListener: function(){
-    this.removeListener(CHANGE_EVENT, callback)
+    this.removeListener(CHANGE_EVENT, callback);
   },
 
   getCart: function(){
-    return _cartItems
+    return _cartItems;
   },
 
   getCatalog: function(){
-    return _catalog
+    return _catalog;
   },
 
   getCartTotals: function(){
-    return _cartTotals()
+    return _cartTotals();
   },
 
   //This is how I register to an specific dispatcher (In this case AppDispatcher)
@@ -120,6 +120,6 @@ var AppStore = assign(EventEmitter.prototype,{
     //Broadcast the events to the views in here
     return true;
   })
-})
+});
 
 module.exports = AppStore;
