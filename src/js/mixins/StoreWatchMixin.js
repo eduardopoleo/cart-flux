@@ -4,7 +4,7 @@ var AppStore = require('../stores/app-store');
 var StoreWatchMixin = function(cb){
   return{
     getInitialState: function(){
-      return cb();
+      return cb(this);
     },
     //After mount it listen for the event and then triggers the on_chage
     //This methods just says. Hey there is a change go there to do something about it.
@@ -17,7 +17,7 @@ var StoreWatchMixin = function(cb){
     },
     //On change what it does is to retrieve the store cart item :) yei
     _onChange: function(){
-      this.setState(cb());
+      this.setState(cb(this));
     }
   };
 };

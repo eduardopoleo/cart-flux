@@ -4,6 +4,7 @@ var RemoveFromCart = require('./app-removefromcart.js');
 var Increase = require('./app-decreaseitem');
 var Decrease = require('./app-increaseitem');
 var StoreWatchMixin = require('../../mixins/StoreWatchMixin');
+var Link = require('react-router-component').Link;
 
 //Cart needs components and react
 //it also needs the store, why?
@@ -36,28 +37,31 @@ var Cart = React.createClass({
       );
     })
     return (
-      <table className="table table-hover">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Item</th>
-            <th>Qty</th>
-            <th></th>
-            <th>Subtotal</th>
-          </tr>
-        </thead>
-        <tbody>
-          {items}
-        </tbody>
-        <tfoot>
-          <tr>
-            <td className="text-right">
-             Total
-            </td>
-            <td>${total}</td>
-          </tr>
-        </tfoot>
-      </table>
+      <div>
+        <table className="table table-hover">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Item</th>
+              <th>Qty</th>
+              <th></th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td className="text-right">
+               Total
+              </td>
+              <td>${total}</td>
+            </tr>
+          </tfoot>
+        </table>
+        <Link href="/">Continue Shopping</Link>
+      </div>
     )
   }
 });
