@@ -1,6 +1,7 @@
 var React = require('react');
 var AppStore = require('../stores/app-store');
-
+//Imp: Any component that is listening to the store and which state is linked to the store
+//when the store information changes 
 var StoreWatchMixin = function(cb){
   return{
     getInitialState: function(){

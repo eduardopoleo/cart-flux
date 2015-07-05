@@ -22,9 +22,10 @@ for(var i=1; i<9; i++) {
   'img' : 'assets/placeholder.jpg'
  });
 }
-
+//How does the cart get updated eveytime??
+//I think this file gets loaded once. Then _cartItem just gets updated.
 var _cartItems = [];
-
+///These are helper methods
 function _removeItem(index){
   _cartItems[index].inCart = false;
   _cartItems.splice(index, 1);
@@ -68,21 +69,22 @@ function _cartTotals(){
   });
   return{'qty': qty, 'total': total};
 }
+//Helper methods
 //The store is an event emitter it self!.
 var AppStore = assign(EventEmitter.prototype,{
-  //Emits the change!
+  //These methods related to the information loop
   emitChange: function(){
     this.emit(CHANGE_EVENT);
   },
-  //listen to the change!
+  //Use in components to listen to specific events broadcasted by this store
   addChangeListener: function(callback){
     this.on(CHANGE_EVENT, callback);
   },
-
+  //Remove the listerner to avoid memory leaks
   removeChangeListener: function(){
     this.removeListener(CHANGE_EVENT, callback);
   },
-
+  //These 3 methods are used to update the state of specific component  
   getCart: function(){
     return _cartItems;
   },
@@ -95,7 +97,7 @@ var AppStore = assign(EventEmitter.prototype,{
     return _cartTotals();
   },
 
-  //This is how I register to an specific dispatcher (In this case AppDispatcher)
+  //Registering the dispatcher
   dispatcherIndex: AppDispatcher.register(function(payload){
     //payload = {source, action}, we only care about action.
     var action = payload.action;

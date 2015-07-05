@@ -8,6 +8,8 @@ function getCatalog(){
   return {items: AppStore.getCatalog()};
 }
 
+//When a item is added: view->action->dispatcher->store->component updates state!
+//Then the item is passed back into CatalogItem as propstr 
 var Catalog = React.createClass({
   mixins:[StoreWatchMixin(getCatalog)],
   render:function(){
